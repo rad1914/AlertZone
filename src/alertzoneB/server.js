@@ -1,25 +1,32 @@
+// @path: server.js
+const express = require('express')
+const cors = require('cors')
 
-const express = require('express');
-const cors = require('cors');
+const app = express()
 
-const app = express();
-app.use(cors({ origin: process.env.CLIENT_URL || '*' }));
-app.use(express.json());
+app.use(cors({ origin: process.env.CLIENT_URL || '*' }))
+app.use(express.json())
 
-const PORT = process.env.PORT || 3001;
+const routes = {
+  '/api/alerts': './routes/alerts',
+  '/api/sensors': './routes/sensors',
+  '/api/map/markers': './routes/markers',
+  '/api/user': './routes/user',
+  '/api/placeholder': './routes/placeholder'
+}
 
-app.use('/api/alerts', require('./routes/alerts'));
-app.use('/api/sensors', require('./routes/sensors'));
-app.use('/api/map/markers', require('./routes/markers'));
-app.use('/api/user', require('./routes/user'));
-app.use('/api/placeholder', require('./routes/placeholder'));
+Object.entries(routes).forEach(([path, file]) =>
+  app.use(path, require(file))
+)
 
 app.use((err, req, res, next) => {
-  console.error(err);
-  if (res.headersSent) return next(err);
-  res.status(500).json({ error: 'Internal Server Error' });
-});
+  if (!res.headersSent)
+    res.status(500).json({ error: 'Internal Server Error' })
+  else
+    next(err)
+})
 
-app.listen(PORT, () => {
-  console.log(`WarRoom API running on http://localhost:${PORT}`);
-});
+const PORT = process.env.PORT || 3001
+app.listen(PORT, () =>
+  console.log(`WarRoom API running on http://localhost:${PORT}`)
+)

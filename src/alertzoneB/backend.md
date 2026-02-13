@@ -1,5 +1,10 @@
 ./server.js
 ./routes/index.js
+./routes/alerts.js
+./routes/markers.js
+./routes/placeholder.js
+./routes/sensors.js
+./routes/user.js
 ./data/markers.js
 ./data/sensors.js
 ./data/alerts.js
@@ -7,27 +12,34 @@
 // @path: server.js
 const express = require('express')
 const cors = require('cors')
-const routes = require('./routes')
 
 const app = express()
-const PORT = process.env.PORT || 3001
 
-app.use(cors(), express.json())
+app.use(cors({ origin: process.env.CLIENT_URL || '*' }))
+app.use(express.json())
 
-;[
-  '/api/alerts',
-  '/api/sensors',
-  '/api/map/markers',
-  '/api/user',
-  '/api/placeholder'
-].forEach(p => app.use(p, routes))
+const routes = {
+  '/api/alerts': './routes/alerts',
+  '/api/sensors': './routes/sensors',
+  '/api/map/markers': './routes/markers',
+  '/api/user': './routes/user',
+  '/api/placeholder': './routes/placeholder'
+}
 
-app.use((err, _, res, next) =>
-  res.headersSent ? next(err) : res.status(500).json({ error: 'Internal Server Error' })
+Object.entries(routes).forEach(([path, file]) =>
+  app.use(path, require(file))
 )
 
+app.use((err, req, res, next) => {
+  if (!res.headersSent)
+    res.status(500).json({ error: 'Internal Server Error' })
+  else
+    next(err)
+})
+
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () =>
-  console.log(`http://localhost:${PORT}`)
+  console.log(`WarRoom API running on http://localhost:${PORT}`)
 )
 // @path: routes/index.js
 const express = require('express');
@@ -82,6 +94,62 @@ router.get('/sensors', (req, res) => {
 
 router.get('/alerts', (req, res) => {
   res.json(alerts);
+});
+
+module.exports = router;
+// @path: routes/alerts.js
+const express = require('express');
+const router = express.Router();
+const alerts = require('../data/alerts');
+
+router.get('/', (req, res) => res.json(alerts));
+
+module.exports = router;
+// @path: routes/markers.js
+// @path: routes/marker.js
+const express = require('express');
+const router = express.Router();
+const markers = require('../data/markers');
+
+router.get('/', (req, res) => res.json(markers));
+
+module.exports = router;
+// @path: routes/placeholder.js
+const express = require('express');
+const router = express.Router();
+
+router.get('/:w/:h', (req, res) => {
+  const wRaw = parseInt(req.params.w, 10);
+  const hRaw = parseInt(req.params.h, 10);
+  if (Number.isNaN(wRaw) || Number.isNaN(hRaw)) return res.status(400).json({ error: 'Invalid size' });
+  const w = Math.max(1, wRaw || 64);
+  const h = Math.max(1, hRaw || 64);
+  const bg = '#374151';
+  const fg = '#ffffff';
+  const size = Math.max(10, Math.floor(Math.min(w, h) / 4));
+  const text = `${w}×${h}`;
+
+  const svg = `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">\n  <rect width="${w}" height="${h}" fill="${bg}"/>\n  <text x="50%" y="50%" fill="${fg}" font-family="Arial, Helvetica, sans-serif" font-size="${size}" dominant-baseline="middle" text-anchor="middle">${text}</text>\n</svg>`;
+
+  res.setHeader('Content-Type', 'image/svg+xml');
+  res.send(svg);
+});
+
+module.exports = router;
+// @path: routes/sensors.js
+const express = require('express');
+const router = express.Router();
+const sensors = require('../data/sensors');
+
+router.get('/', (req, res) => res.json(sensors));
+
+module.exports = router;
+// @path: routes/user.js
+const express = require('express');
+const router = express.Router();
+
+router.get('/', (req, res) => {
+  res.json({ name: 'J. PÉREZ', avatar: `/api/placeholder/32/32` });
 });
 
 module.exports = router;

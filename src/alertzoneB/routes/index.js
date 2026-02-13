@@ -6,9 +6,6 @@ const markers = require('../data/markers');
 const sensors = require('../data/sensors');
 const alerts = require('../data/alerts');
 
-/* =========================
-   Placeholder SVG
-========================= */
 router.get('/placeholder/:w/:h', (req, res) => {
   const wRaw = parseInt(req.params.w, 10);
   const hRaw = parseInt(req.params.h, 10);
@@ -37,9 +34,6 @@ router.get('/placeholder/:w/:h', (req, res) => {
   res.send(svg);
 });
 
-/* =========================
-   User
-========================= */
 router.get('/user', (req, res) => {
   res.json({
     name: 'J. PÉREZ',
@@ -47,23 +41,14 @@ router.get('/user', (req, res) => {
   });
 });
 
-/* =========================
-   Markers
-========================= */
 router.get('/marker', (req, res) => {
   res.json(markers);
 });
 
-/* =========================
-   Sensors
-========================= */
 router.get('/sensors', (req, res) => {
   res.json(sensors);
 });
 
-/* =========================
-   Alerts
-========================= */
 router.get('/alerts', (req, res) => {
   res.json(alerts);
 });
