@@ -1,8 +1,8 @@
+<!-- @path: src/lib/components/TopHeader.svelte -->
 <script>
   export let operator = "J. PÉREZ";
   export let state = "ALERTA MÁXIMA";
 </script>
-
 <header class="top-header">
   <div class="header-left">
     <span class="brand">AlertZone</span>

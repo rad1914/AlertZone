@@ -1,13 +1,12 @@
+<!-- @path: src/lib/components/RealTimeList.svelte -->
 <script>
   export let items = [];
 </script>
-
 <section class="panel list-panel realtime">
   <div class="panel-header">
     <h2>REAL TIME DATA</h2>
     <span class="dots">•••</span>
   </div>
-
   <div class="data-list">
     {#each items as item}
       <div class="data-item {item.active ? 'active' : ''}">

@@ -1,12 +1,11 @@
+<!-- @path: src/lib/components/SensorsList.svelte -->
 <script>
   export let items = [];
 </script>
-
 <section class="panel list-panel sensors">
   <div class="panel-header">
     <h2>Sensors</h2>
   </div>
-
   <div class="sensor-list">
     {#each items as sensor}
       <div class="sensor-item">

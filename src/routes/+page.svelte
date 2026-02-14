@@ -6,20 +6,17 @@
   import MapPanel from '$lib/components/MapPanel.svelte';
   import RealTimeList from '$lib/components/RealTimeList.svelte';
   import SensorsList from '$lib/components/SensorsList.svelte';
-  import { realTimeData, sensors } from '$lib/data.js';
   import '$lib/styles/app.css';
-
-  let realTime = realTimeData;
-  let sensorsList = sensors;
+  
+  export let data;
+  let realTime = data.realTime;
+  let sensorsList = data.sensors;
 </script>
-
 <div class="app-container">
   <Sidebar />
-
   <main class="main-content">
     <TopHeader operator="J. PÉREZ" state="ALERTA MÁXIMA" />
     <DashboardHeader />
-
     <div class="dashboard-grid">
       <IncidentPanel />
       <MapPanel />

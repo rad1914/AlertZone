@@ -1,7 +1,5 @@
-<script>
-  // purely presentational
-</script>
-
+<!-- @path: src/lib/components/Sidebar.svelte -->
+<script></script>
 <aside class="sidebar">
   <div class="logo-icon">
     <svg viewBox="0 0 24 24" fill="none" stroke="#ff4747" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 22h20L12 2z"/></svg>

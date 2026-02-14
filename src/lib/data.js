@@ -1,15 +1,14 @@
-export const realTimeData = [
-  { title: "Fuego Activo", desc: "Incomino en obeo 95 0:22..", icon: "⚠️", active: false },
-  { title: "Recurses Desplegados", desc: "Incomino en obeo 93 0:22..", icon: "⚠️", active: true },
-  { title: "Centie Eonssser", desc: "Incomino en obeo 95 0:28..", icon: "⚠️", active: false },
-  { title: "Fuego Activo", desc: "Incomino en obeo 93 0:23..", icon: "⚠️", active: false },
-  { title: "Fasgo Active", desc: "Incomino en obeo 03 0:22..", icon: "⚠️", active: false }
-];
+// @path: src/lib/data.js
+const API_BASE = 'http://192.168.100.10:3001/api';
 
-export const sensors = [
-  { name: "Inceming Baquitify", value: "-3 oda", status: "red" },
-  { name: "Sensor Fligh", value: "-3? cem", status: "red" },
-  { name: "Senoor Aoavnita.", value: "75 °C", status: "green" },
-  { name: "Sensor Pralbeit", value: "", status: "green" },
-  { name: "Sensor Reading:", value: "", status: "blue" }
-];
+export const realTimeData = fetch(`${API_BASE}/realtime`)
+  .then(res => {
+    if (!res.ok) throw new Error('Failed to fetch realtime data');
+    return res.json();
+  });
+
+export const sensors = fetch(`${API_BASE}/sensors`)
+  .then(res => {
+    if (!res.ok) throw new Error('Failed to fetch sensors data');
+    return res.json();
+  });
