@@ -1,8 +1,10 @@
 <script>
   import { onMount } from 'svelte';
+  import { goto } from '$app/navigation';
   import TrafficLight from './TrafficLight.svelte';
 
   let incident = {
+    id: null,
     title: "",
     desc: "",
     priority: 0,
@@ -26,6 +28,11 @@
       loading = false;
     }
   });
+
+  function goToDetails() {
+    if (!incident.active || !incident.id) return;
+    goto(`/incidents/${incident.id}`);
+  }
 
   $: gravedad =
     incident.priority >= 3
@@ -66,7 +73,10 @@
     <p><strong>Recursos:</strong> {recursos}</p>
     <p><strong>Llegada:</strong> {llegada}</p>
 
-    <button disabled={!incident.active}>
+    <button
+      on:click={goToDetails}
+      disabled={!incident.active || !incident.id}
+    >
       Detalles
     </button>
   {/if}

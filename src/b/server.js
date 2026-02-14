@@ -76,20 +76,27 @@ app.get('/api/dashboard', auth, (req, res) =>
   })
 )
 
-app.patch('/api/alerts/:id', (req, res) => {
-  const alert = alerts.find(a => a.id == req.params.id)
-  if (!alert) return res.status(404).json({ error: 'Not found' })
-
-  Object.assign(alert, req.body)
-  res.json(alert)
-})
-
 app.get('/api/incident', (_, res) =>
   res.json(
     alerts.length
       ? alerts.reduce((a, b) => b.priority > a.priority ? b : a)
-      : { title: "Sin Alertas", desc: "No hay alertas activas.", priority: 0, active: false }
+      : {
+          id: null,
+          title: "Sin Alertas",
+          desc: "No hay alertas activas.",
+          priority: 0,
+          active: false,
+          recursosDesplegados: "",
+          llegadaEstimada: ""
+        }
   )
 )
+
+app.get('/api/incident/:id', (req, res) => {
+  const incident = alerts.find(a => a.id == req.params.id)
+  if (!incident) return res.status(404).json({ error: 'Not found' })
+  res.json(incident)
+})
+
 
 app.listen(PORT)
