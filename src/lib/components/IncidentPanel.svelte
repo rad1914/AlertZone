@@ -31,7 +31,12 @@
       : "";
 </script>
 
-<section class="panel incident-panel">
+<section
+  class="panel incident-panel"
+  class:red={activeLight === 'red'}
+  class:yellow={activeLight === 'yellow'}
+  class:green={activeLight === 'green'}
+>
   <h2 class="panel-title center">NUEVA INCIDENCIA</h2>
 
   <div class="traffic-light-container">
@@ -49,7 +54,7 @@
     <div class="stats-list">
       <div class="stat-row">
         <span class="stat-label">Gravedad:</span>
-        <span class="stat-value red-text">{gravedad}</span>
+        <span class="stat-value">{gravedad}</span>
       </div>
 
       <div class="stat-row">

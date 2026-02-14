@@ -5,7 +5,7 @@
 </script>
 <header class="top-header">
   <div class="header-left">
-    <span class="brand">AlertZone</span>
+    <span class="brand">Zone</span>
     <span class="divider"></span>
     <span class="header-label blue-text">WAR ROOM</span>
     <span class="header-label">OPERADOR: <span class="white-text">{operator}</span></span>
