@@ -1,6 +1,8 @@
-// @path: src/routes/+page.js
+// src/routes/+page.js
 export async function load({ fetch }) {
-  const res = await fetch('http://192.168.100.10:3001/api/dashboard');
+  const res = await fetch('http://192.168.100.10:3001/api/dashboard', {
+    credentials: 'include'
+  });
 
   if (!res.ok) {
     return { dashboard: null };

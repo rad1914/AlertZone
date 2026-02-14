@@ -1,4 +1,3 @@
-<!-- @path: src/lib/components/IncidentPanel.svelte -->
 <script>
   import { onMount } from 'svelte';
 
@@ -6,27 +5,36 @@
   let subtitle = "";
   let gravedad = "";
   let recursos = "";
-  let eta = "";
+  let llegada = "";
 
   onMount(async () => {
-    const res = await fetch('http://192.168.100.10:3001/api/incident');
+    const res = await fetch('http://192.168.100.10:3001/api/incident', {
+      credentials: 'include'
+    });
     if (!res.ok) return;
 
     const data = await res.json();
 
-    incidentTitle = data.incidentTitle;
-    subtitle = data.subtitle;
-    gravedad = data.gravedad;
-    recursos = data.recursos;
-    eta = data.eta;
+    incidentTitle = data.title;
+    subtitle = data.desc;
+    recursos = data.recursosDesplegados || "";
+    llegada = data.llegadaEstimada || "";
+
+    if (data.priority >= 3) gravedad = "Alta";
+    else if (data.priority === 2) gravedad = "Media";
+    else gravedad = "Baja";
   });
 
+  $: normalizedGravedad = gravedad
+    ? gravedad.charAt(0).toUpperCase() + gravedad.slice(1).toLowerCase()
+    : "";
+
   $: activeLight =
-    gravedad === "Alta"
+    normalizedGravedad === "Alta"
       ? "red"
-      : gravedad === "Media"
+      : normalizedGravedad === "Media"
       ? "yellow"
-      : gravedad
+      : normalizedGravedad === "Baja"
       ? "green"
       : "";
 </script>
@@ -54,20 +62,20 @@
     <div class="stats-list">
       <div class="stat-row">
         <span class="stat-label">Gravedad:</span>
-        <span class="stat-value">{gravedad}</span>
+        <span class="stat-value">{normalizedGravedad}</span>
       </div>
 
       <div class="stat-row">
-        <span class="stat-label">Recursos Desplegados:</span>
-        <span class="stat-value white-text">{recursos}</span>
+        <span class="stat-label">Recursos desplegados:</span>
+        <span class="stat-value">{recursos}</span>
       </div>
 
       <div class="stat-row">
-        <span class="stat-label">Tiempo Estimado de Llegada:</span>
-        <span class="stat-value white-text">{eta}</span>
+        <span class="stat-label">Llegada estimada:</span>
+        <span class="stat-value">{llegada}</span>
       </div>
     </div>
 
-    <button class="btn-action-red">Noeve incidenois</button>
+   <button class="btn-action">Detalles</button>
   </div>
 </section>

@@ -1,3 +1,4 @@
+<!-- @path: src/routes/+page.svelte -->
 <script>
   import Sidebar from '$lib/components/Sidebar.svelte';
   import TopHeader from '$lib/components/TopHeader.svelte';
@@ -7,26 +8,20 @@
   import RealTimeList from '$lib/components/RealTimeList.svelte';
   import SensorsList from '$lib/components/SensorsList.svelte';
   import '$lib/styles/app.css';
-
   export let data;
 </script>
-
 <div class="app-container">
   <Sidebar />
-
   {#if data.dashboard}
     <main class="main-content">
       <TopHeader
         operator={data.dashboard.operator}
         state={data.dashboard.state}
       />
-
       <DashboardHeader />
-
       <div class="dashboard-grid">
         <IncidentPanel />
         <MapPanel />
-
         <div class="right-column">
           <RealTimeList items={data.dashboard.realTime} />
           <SensorsList items={data.dashboard.sensors} />

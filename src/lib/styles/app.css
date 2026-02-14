@@ -236,30 +236,26 @@ body {
 
   /* Incident Panel (Left) */
 .incident-panel {
-  padding: 20px;
+  padding: 25px;
   transition: 0.3s ease;
+  border: 3px solid rgba(var(--color), 0.5);
+  box-shadow:
+    0 0 20px rgba(var(--color), 0.15),
+    inset 0 0 50px rgba(var(--color), 0.2);
 }
 
 .incident-panel.red {
-  border: 1px solid rgba(239, 68, 68, 0.4);
-  box-shadow:
-    0 0 20px rgba(239, 68, 68, 0.15),
-    inset 0 0 20px rgba(239, 68, 68, 0.2);
+  --color: 239, 68, 68;
 }
 
 .incident-panel.yellow {
-  border: 1px solid rgba(250, 204, 21, 0.4);
-  box-shadow:
-    0 0 20px rgba(250, 204, 21, 0.15),
-    inset 0 0 20px rgba(250, 204, 21, 0.2);
+  --color: 250, 204, 21;
 }
 
 .incident-panel.green {
-  border: 1px solid rgba(34, 197, 94, 0.4);
-  box-shadow:
-    0 0 20px rgba(34, 197, 94, 0.15),
-    inset 0 0 20px rgba(34, 197, 94, 0.2);
+  --color: 34, 197, 94;
 }
+
 
   .panel-title.center {
     text-align: center;
@@ -350,22 +346,28 @@ body {
     border-bottom: none;
   }
 
-  .btn-action-red {
-    background: linear-gradient(180deg, rgba(239,68,68,0.1) 0%, rgba(239,68,68,0.2) 100%);
-    border: 1px solid rgba(239,68,68,0.3);
-    color: #ef4444;
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: auto;
-    transition: 0.2s;
-  }
 
-  .btn-action-red:hover {
-    background: rgba(239,68,68,0.2);
-  }
+.btn-action {
+  background: linear-gradient(
+    180deg,
+    rgba(13,15,18,0.1) 0%,
+    rgba(13,15,18,0.2) 100%
+  );
+  border: 1px solid rgba(13,15,18,0.3);
+  color: #0d0f12;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: auto;
+  transition: 0.2s;
+}
+
+.btn-action:hover {
+  background: rgba(13,15,18,0.2);
+}
+
 
   /* Map Panel (Center) */
   .map-panel {
