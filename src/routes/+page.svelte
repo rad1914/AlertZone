@@ -7,23 +7,31 @@
   import RealTimeList from '$lib/components/RealTimeList.svelte';
   import SensorsList from '$lib/components/SensorsList.svelte';
   import '$lib/styles/app.css';
-  
+
   export let data;
-  let realTime = data.realTime;
-  let sensorsList = data.sensors;
 </script>
+
 <div class="app-container">
   <Sidebar />
-  <main class="main-content">
-    <TopHeader operator="J. PÉREZ" state="ALERTA MÁXIMA" />
-    <DashboardHeader />
-    <div class="dashboard-grid">
-      <IncidentPanel />
-      <MapPanel />
-      <div class="right-column">
-        <RealTimeList items={realTime} />
-        <SensorsList items={sensorsList} />
+
+  {#if data.dashboard}
+    <main class="main-content">
+      <TopHeader
+        operator={data.dashboard.operator}
+        state={data.dashboard.state}
+      />
+
+      <DashboardHeader />
+
+      <div class="dashboard-grid">
+        <IncidentPanel />
+        <MapPanel />
+
+        <div class="right-column">
+          <RealTimeList items={data.dashboard.realTime} />
+          <SensorsList items={data.dashboard.sensors} />
+        </div>
       </div>
-    </div>
-  </main>
+    </main>
+  {/if}
 </div>

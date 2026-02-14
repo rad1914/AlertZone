@@ -16,5 +16,13 @@ const sensors = [
 
 app.get('/api/realtime', (_, r) => r.json(alerts))
 app.get('/api/sensors', (_, r) => r.json(sensors))
+app.get('/api/dashboard', (_, r) =>
+  r.json({
+    operator: "Carlos Pérez",
+    state: "ALERTA MÁXIMA",
+    realTime: alerts,
+    sensors: sensors
+  })
+)
 
 app.listen(process.env.PORT || 3001)
