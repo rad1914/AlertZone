@@ -19,13 +19,13 @@
     map = L.map('map', {
       zoomControl: false,
       attributionControl: false
-    }).setView([19.4326, -99.1332], 12);
+    }).setView([19.7047, -103.4617], 13);
 
     L.tileLayer(
       'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
     ).addTo(map);
 
-    L.marker([19.4326, -99.1332]).addTo(map);
+    L.marker([19.7047, -103.4617]).addTo(map);
   });
 </script>
 

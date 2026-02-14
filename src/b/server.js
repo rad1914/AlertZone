@@ -19,7 +19,7 @@ const ADMIN = { username: 'admin', password: 'admin' }
 const alerts = [
   { 
     id: 2, 
-    title: "Taquitop funado", 
+    title: "Qsorrallado", 
     desc: "Incendio en obeo 95 0:22..", 
     icon: "⭕", 
     active: true, 
