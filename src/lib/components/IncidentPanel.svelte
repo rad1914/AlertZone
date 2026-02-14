@@ -1,42 +1,56 @@
 <script>
   import { onMount } from 'svelte';
 
-  let incidentTitle = "";
-  let subtitle = "";
-  let gravedad = "";
-  let recursos = "";
-  let llegada = "";
+  let incident = {
+    title: "",
+    desc: "",
+    priority: 0,
+    active: false,
+    recursosDesplegados: "",
+    llegadaEstimada: ""
+  };
+
+  let loading = true;
 
   onMount(async () => {
-    const res = await fetch('http://192.168.100.10:3001/api/incident', {
-      credentials: 'include'
-    });
-    if (!res.ok) return;
+    try {
+      const res = await fetch('http://192.168.100.10:3001/api/incident', {
+        credentials: 'include'
+      });
 
-    const data = await res.json();
+      if (!res.ok) {
+        loading = false;
+        return;
+      }
 
-    incidentTitle = data.title;
-    subtitle = data.desc;
-    recursos = data.recursosDesplegados || "";
-    llegada = data.llegadaEstimada || "";
-
-    if (data.priority >= 3) gravedad = "Alta";
-    else if (data.priority === 2) gravedad = "Media";
-    else gravedad = "Baja";
+      incident = await res.json();
+    } finally {
+      loading = false;
+    }
   });
 
-  $: normalizedGravedad = gravedad
-    ? gravedad.charAt(0).toUpperCase() + gravedad.slice(1).toLowerCase()
-    : "";
+  $: gravedad =
+    incident.priority >= 3
+      ? "Alta"
+      : incident.priority === 2
+      ? "Media"
+      : incident.priority === 1
+      ? "Baja"
+      : "Sin prioridad";
 
   $: activeLight =
-    normalizedGravedad === "Alta"
+    !incident.active
+      ? ""
+      : gravedad === "Alta"
       ? "red"
-      : normalizedGravedad === "Media"
+      : gravedad === "Media"
       ? "yellow"
-      : normalizedGravedad === "Baja"
+      : gravedad === "Baja"
       ? "green"
       : "";
+
+  $: recursos = incident.recursosDesplegados || "No especificado";
+  $: llegada = incident.llegadaEstimada || "No disponible";
 </script>
 
 <section
@@ -47,35 +61,41 @@
 >
   <h2 class="panel-title center">NUEVA INCIDENCIA</h2>
 
-  <div class="traffic-light-container">
-    <div class="traffic-light">
-      <div class="light red" class:active={activeLight === 'red'}></div>
-      <div class="light yellow" class:active={activeLight === 'yellow'}></div>
-      <div class="light green" class:active={activeLight === 'green'}></div>
-    </div>
-  </div>
-
-  <div class="incident-details">
-    <h3>{incidentTitle}</h3>
-    <p class="subtitle">{subtitle}</p>
-
-    <div class="stats-list">
-      <div class="stat-row">
-        <span class="stat-label">Gravedad:</span>
-        <span class="stat-value">{normalizedGravedad}</span>
-      </div>
-
-      <div class="stat-row">
-        <span class="stat-label">Recursos desplegados:</span>
-        <span class="stat-value">{recursos}</span>
-      </div>
-
-      <div class="stat-row">
-        <span class="stat-label">Llegada estimada:</span>
-        <span class="stat-value">{llegada}</span>
+  {#if loading}
+    <p>Cargando incidencia...</p>
+  {:else}
+    <div class="traffic-light-container">
+      <div class="traffic-light">
+        <div class="light red" class:active={activeLight === 'red'}></div>
+        <div class="light yellow" class:active={activeLight === 'yellow'}></div>
+        <div class="light green" class:active={activeLight === 'green'}></div>
       </div>
     </div>
 
-   <button class="btn-action">Detalles</button>
-  </div>
+    <div class="incident-details">
+      <h3>{incident.title}</h3>
+      <p class="subtitle">{incident.desc}</p>
+
+      <div class="stats-list">
+        <div class="stat-row">
+          <span class="stat-label">Gravedad:</span>
+          <span class="stat-value">{gravedad}</span>
+        </div>
+
+        <div class="stat-row">
+          <span class="stat-label">Recursos desplegados:</span>
+          <span class="stat-value">{recursos}</span>
+        </div>
+
+        <div class="stat-row">
+          <span class="stat-label">Llegada estimada:</span>
+          <span class="stat-value">{llegada}</span>
+        </div>
+      </div>
+
+      <button class="btn-action" disabled={!incident.active}>
+        Detalles
+      </button>
+    </div>
+  {/if}
 </section>

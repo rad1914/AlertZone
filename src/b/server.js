@@ -17,8 +17,26 @@ app.use(session({
 const ADMIN = { username: 'admin', password: 'admin' }
 
 const alerts = [
-  { id: 2, title: "Awacatitop Enojado", desc: "Incendio en obeo 95 0:22..", icon: "⭕", active: true, priority: 3 },
-  { id: 1, title: "Awacatitop Activo", desc: "Incendio en obeo 95 0:22..", icon: "⚠️", active: false, priority: 2 }
+  { 
+    id: 2, 
+    title: "Taquitop funado", 
+    desc: "Incendio en obeo 95 0:22..", 
+    icon: "⭕", 
+    active: true, 
+    priority: 3,
+    recursosDesplegados: "N/A",
+    llegadaEstimada: "5 minutos"
+  },
+  { 
+    id: 1, 
+    title: "Awacatitop Activo", 
+    desc: "Incendio en obeo 95 0:22..", 
+    icon: "⚠️", 
+    active: false, 
+    priority: 2,
+    recursosDesplegados: "1 patrulla",
+    llegadaEstimada: "12 minutos"
+  }
 ]
 
 const sensors = [
