@@ -4,7 +4,7 @@
 </script>
 <section class="panel list-panel realtime">
   <div class="panel-header">
-    <h2>REAL TIME DATA</h2>
+    <h2>ALERTAS</h2>
     <span class="dots">•••</span>
   </div>
   <div class="data-list">

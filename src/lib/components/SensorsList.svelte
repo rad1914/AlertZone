@@ -4,7 +4,7 @@
 </script>
 <section class="panel list-panel sensors">
   <div class="panel-header">
-    <h2>Sensors</h2>
+    <h2>Sensores</h2>
   </div>
   <div class="sensor-list">
     {#each items as sensor}

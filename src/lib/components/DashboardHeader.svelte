@@ -1,8 +1,8 @@
 <!-- @path: src/lib/components/DashboardHeader.svelte -->
 <script>
-  export let title = `"War Room" Dashboard`;
+  export let title = `Tablero Principal`;
   export let leftBtn = "Gopoal Maidientis";
-  export let rightBtn = "Mes bnub to rmidados";
+  export let rightBtn = "ACTUALIZAR";
 </script>
 <div class="dashboard-header">
   <h1>{title}</h1>

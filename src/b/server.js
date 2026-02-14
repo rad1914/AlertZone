@@ -25,4 +25,16 @@ app.get('/api/dashboard', (_, r) =>
   })
 )
 
+app.get('/api/incident', (_, r) =>
+  r.json({
+    incidentTitle: "Fuego apagado",
+    subtitle: "Volcán de Colima",
+    gravedad: "Media",
+    recursos: "1 Unidad",
+    eta: "2 min",
+    status: "yellow"
+  })
+)
+
+
 app.listen(process.env.PORT || 3001)
