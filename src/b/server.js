@@ -8,9 +8,23 @@ const fs = require('fs')
 const app = express()
 const PORT = process.env.PORT || 3001
 
-app.use(cors({ origin: 'http://192.168.100.10:5173', credentials: true }))
+app.use(cors({
+  origin: true,
+  credentials: true
+}))
+
 app.use(express.json())
-app.use(session({ secret: 'ultra_secret_key', resave: false, saveUninitialized: false }))
+
+app.use(session({
+  secret: 'ultra_secret_key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: false
+  }
+}))
 
 const ADMIN = { username: 'admin', password: 'admin' }
 
@@ -32,6 +46,7 @@ app.post('/api/login', (req, res) => {
   const { username, password } = req.body
   if (username !== ADMIN.username || password !== ADMIN.password)
     return res.status(401).json({ ok: false })
+
   req.session.user = ADMIN.username
   res.json({ ok: true })
 })

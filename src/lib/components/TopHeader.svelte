@@ -1,20 +1,21 @@
 <!-- @path: src/lib/components/TopHeader.svelte -->
 <script>
   import { onMount } from "svelte";
+  import { getDashboard } from "$lib/data";
+
   let operator = "";
   let state = "";
+  let realTime = [];
+  let sensors = [];
+
   onMount(async () => {
     try {
-      const res = await fetch("http://192.168.100.10:3001/api/dashboard", {
-        credentials: "include"
-      });
-      if (!res.ok) {
-        console.error("Unauthorized or server error");
-        return;
-      }
-      const data = await res.json();
+      const data = await getDashboard();
+
       operator = data.operator;
       state = data.state;
+      realTime = data.realTime;
+      sensors = data.sensors;
     } catch (err) {
       console.error("Dashboard fetch failed:", err);
     }

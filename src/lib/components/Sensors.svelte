@@ -1,5 +1,4 @@
 <!-- @path: src/lib/components/Sensors.svelte -->
-<!-- @path: src/lib/components/SensorsList.svelte -->
 <script>
   export let items = [];
 </script>

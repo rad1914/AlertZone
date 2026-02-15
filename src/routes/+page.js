@@ -1,13 +1,17 @@
 // @path: src/routes/+page.js
+import { redirect } from '@sveltejs/kit';
+import { getDashboard } from '$lib/data';
 
-export async function load({ fetch }) {
-  const res = await fetch('http://192.168.100.10:3001/api/dashboard', {
-    credentials: 'include'
-  });
+export async function load() {
+  try {
+    const dashboard = await getDashboard();
 
-  if (!res.ok) {
-    return { dashboard: null };
+    if (!dashboard) {
+      throw redirect(302, '/login');
+    }
+
+    return { dashboard };
+  } catch {
+    throw redirect(302, '/login');
   }
-
-  return { dashboard: await res.json() };
 }

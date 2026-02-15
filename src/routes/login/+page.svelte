@@ -1,24 +1,32 @@
-<!-- @path: src/routes/login/+page.svelte -->
 <script>
   import { goto } from '$app/navigation'
+  import { login, checkSession } from '$lib/data'
+  import { onMount } from 'svelte'
+
   let username = ''
   let password = ''
   let error = ''
+
+  onMount(async () => {
+    try {
+      await checkSession()
+      goto('/')
+    } catch {}
+  })
+
   async function handleLogin() {
+    error = ''
     if (!username || !password) {
       error = 'Completa todos los campos para continuar'
       return
     }
-    const res = await fetch('http://192.168.100.10:3001/api/login', {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
-    })
-    if (res.ok) {
-     goto('/')
-    } else {
-      error = 'Credenciales inválidas. Intenta de nuevo.'
+    try {
+      await login(username, password)
+      goto('/')
+    } catch (e) {
+      error = e.message === 'Unauthorized'
+        ? 'Credenciales inválidas. Intenta de nuevo.'
+        : 'Error de conexión con el servidor.'
     }
   }
 </script>

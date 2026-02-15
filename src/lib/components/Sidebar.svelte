@@ -1,17 +1,25 @@
-<!-- @path: src/lib/components/Sidebar.svelte -->
 <script>
   import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
+  import { logout as apiLogout } from '$lib/data';
+
+  $: current = $page.url.pathname;
+
   async function logout() {
-    const res = await fetch('http://192.168.100.10:3001/api/logout', {
-      method: 'POST',
-      credentials: 'include'
-    });
-    if (res.ok) {
+    try {
+      await apiLogout();
       await goto('/login');
+    } catch (e) {
+      console.error(e);
     }
   }
+
   function goHome() {
     goto('/');
+  }
+
+  function incidents() {
+    goto('/incidents');
   }
 </script>
 <aside class="sidebar">
@@ -21,32 +29,24 @@
     </svg>
   </div>
   <nav class="nav-icons">
-    <div class="nav-item">
-      <span class="icon">
-        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-          <circle cx="12" cy="13" r="4"></circle>
-        </svg>
-      </span>
-    </div>
-    <div class="nav-item active">
-      <span class="icon">
-        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line>
-          <line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line>
-          <line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line>
-          <line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line>
-          <line x1="17" y1="16" x2="23" y2="16"></line>
-        </svg>
-      </span>
-    </div>
-    <div class="nav-item">
-      <span class="icon">
-        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 22V15M12 2l4 6h-3l4 7H7l4-7H8l4-6z"></path>
-        </svg>
-      </span>
-    </div>
+
+<div class="nav-item active">
+  <span class="icon" on:click={goHome}>
+    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+      <polyline points="9 22 9 12 15 12 15 22"></polyline>
+    </svg>
+  </span>
+</div>
+
+
+<div class="nav-item">
+  <span class="icon" on:click={incidents}>
+    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+    </svg>
+  </span>
+</div>
     <div class="nav-item">
       <span class="icon">
         <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">

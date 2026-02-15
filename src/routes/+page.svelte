@@ -12,21 +12,19 @@
 </script>
 <div class="app-container">
   <Sidebar />
-  {#if data.dashboard}
-    <main class="main-content">
-      <TopHeader
-        operator={data.dashboard.operator}
-        state={data.dashboard.state}
-      />
-      <DashboardHeader />
-      <div class="dashboard-grid">
-        <IncidentPanel />
-        <MapPanel />
-        <div class="right-column">
-          <RealTimeList items={data.dashboard.realTime} />
-          <SensorsList items={data.dashboard.sensors} />
-        </div>
+  <main class="main-content">
+    <TopHeader
+      operator={data.dashboard.operator}
+      state={data.dashboard.state}
+    />
+    <DashboardHeader />
+    <div class="dashboard-grid">
+      <IncidentPanel />
+      <MapPanel />
+      <div class="right-column">
+        <RealTimeList items={data.dashboard.realTime} />
+        <SensorsList items={data.dashboard.sensors} />
       </div>
-    </main>
-  {/if}
+    </div>
+  </main>
 </div>

@@ -1,7 +1,15 @@
 // @path: vite.config.js
-import { sveltekit } from '@sveltejs/kit/vite';
-import { defineConfig } from 'vite';
+import { sveltekit } from '@sveltejs/kit/vite'
+import { defineConfig } from 'vite'
 
 export default defineConfig({
-	plugins: [sveltekit()]
-});
+	plugins: [sveltekit()],
+	server: {
+		proxy: {
+			'/api': {
+				target: 'http://192.168.100.10:3001',
+				changeOrigin: true
+			}
+		}
+	}
+})

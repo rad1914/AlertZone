@@ -1,5 +1,4 @@
 <!-- @path: src/lib/components/Alerts.svelte -->
-<!-- @path: src/lib/components/RealTimeList.svelte -->
 <script>
   export let items = [];
 </script>

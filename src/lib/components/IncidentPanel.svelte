@@ -1,51 +1,40 @@
-<!-- @path: src/lib/components/IncidentPanel.svelte -->
 <script>
-  import { goto } from '$app/navigation'
-  import { onMount } from 'svelte'
-  let incident = null
-  let loading = true
-  onMount(async () => {
-    try {
-      const res = await fetch('http://192.168.100.10:3001/api/incident', {
-        credentials: 'include'
-      })
-      if (!res.ok) {
-        incident = null
-        return
-      }
-      incident = await res.json()
-    } catch {
-      incident = null
-    } finally {
-      loading = false
-    }
-  })
-  $: prioridad = incident?.priority ?? 0
-  $: gravedad =
-    prioridad >= 4
-      ? "Crítica"
-      : prioridad === 3
-      ? "Alta"
-      : prioridad === 2
-      ? "Media"
-      : prioridad === 1
-      ? "Baja"
-      : "Sin prioridad"
-  $: activeLight =
-    !incident?.active
-      ? ""
-      : gravedad === "Crítica"
-      ? "red"
-      : gravedad === "Alta"
-      ? "red"
-      : gravedad === "Media"
-      ? "yellow"
-      : gravedad === "Baja"
-      ? "green"
-      : ""
-  $: recursos = incident?.recursosDesplegados || "No especificado"
-  $: llegada = incident?.llegadaEstimada || "No disponible"
+import { onMount } from 'svelte'
+import { getCurrentIncident } from '$lib/data'
+
+let incident = null
+let loading = true
+
+onMount(async () => {
+  try {
+    incident = await getCurrentIncident()
+  } catch {
+    incident = null
+  }
+  loading = false
+})
+
+$: prioridad = incident?.priority ?? 0
+
+$: gravedad =
+  prioridad >= 4 ? "Crítica" :
+  prioridad === 3 ? "Alta" :
+  prioridad === 2 ? "Media" :
+  prioridad === 1 ? "Baja" :
+  "Sin prioridad"
+
+$: activeLight =
+  incident?.active
+    ? prioridad >= 3 ? "red"
+    : prioridad === 2 ? "yellow"
+    : prioridad === 1 ? "green"
+    : ""
+    : ""
+
+$: recursos = incident?.recursosDesplegados ?? "No especificado"
+$: llegada = incident?.llegadaEstimada ?? "No disponible"
 </script>
+
 <section
   class="panel incident-panel"
   class:red={activeLight === 'red'}

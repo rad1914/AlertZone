@@ -1,7 +1,9 @@
 // @path: src/routes/incidents/[id]/+server.js
+import { API_BASE } from '$lib/data';
+
 export async function GET({ params }) {
   const res = await fetch(
-    `http://192.168.100.10:3001/api/incident/${params.id}`
+    `${API_BASE}/incident/${params.id}`
   );
 
   const data = await res.json();
