@@ -5,8 +5,8 @@
   import DashboardHeader from '$lib/components/DashboardHeader.svelte';
   import IncidentPanel from '$lib/components/IncidentPanel.svelte';
   import MapPanel from '$lib/components/MapPanel.svelte';
-  import RealTimeList from '$lib/components/RealTimeList.svelte';
-  import SensorsList from '$lib/components/SensorsList.svelte';
+  import RealTimeList from '$lib/components/Alerts.svelte';
+  import SensorsList from '$lib/components/Sensors.svelte';
   import '$lib/styles/app.css';
   export let data;
 </script>

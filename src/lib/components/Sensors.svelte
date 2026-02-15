@@ -2,11 +2,13 @@
 <script>
   export let items = [];
 </script>
-<section class="panel list-panel sensors">
+
+<section class="panel list-panel sensors" style="height: 180; max-height: 180px; overflow: hidden;">
   <div class="panel-header">
-    <h2>Sensores</h2>
+    <h2>SENSORES</h2>
   </div>
-  <div class="sensor-list">
+
+  <div class="sensor-list" style="flex: 1; overflow-y: auto;">
     {#each items as sensor}
       <div class="sensor-item">
         <div class="sensor-left">

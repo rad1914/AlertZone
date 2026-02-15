@@ -1,0 +1,17 @@
+[
+  { "id": 1, "name": "Temperatura del sensor", "value": 45, "unit": "°C", "status": "green" },
+  { "id": 2, "name": "Presión del sistema", "value": 120, "unit": "psi", "status": "green" },
+  { "id": 3, "name": "Humedad relativa", "value": 85, "unit": "%", "status": "yellow" },
+  { "id": 4, "name": "Nivel de tanque principal", "value": 15, "unit": "%", "status": "red" },
+  { "id": 5, "name": "Velocidad del motor", "value": 1450, "unit": "rpm", "status": "green" },
+  { "id": 6, "name": "Voltaje de entrada", "value": 220, "unit": "V", "status": "green" },
+  { "id": 7, "name": "Corriente de carga", "value": 18, "unit": "A", "status": "yellow" },
+  { "id": 8, "name": "Caudal de agua", "value": 50, "unit": "L/min", "status": "green" },
+  { "id": 9, "name": "Vibración del eje", "value": 4.2, "unit": "mm/s", "status": "red" },
+  { "id": 10, "name": "Nivel de aceite", "value": 60, "unit": "%", "status": "green" },
+  { "id": 11, "name": "Temperatura de escape", "value": 350, "unit": "°C", "status": "yellow" },
+  { "id": 12, "name": "Flujo de aire", "value": 12, "unit": "m3/min", "status": "green" },
+  { "id": 13, "name": "Concentración de CO2", "value": 800, "unit": "ppm", "status": "green" },
+  { "id": 14, "name": "Presión diferencial", "value": 1.5, "unit": "bar", "status": "yellow" },
+  { "id": 15, "name": "Frecuencia de red", "value": 49.8, "unit": "Hz", "status": "green" }
+]

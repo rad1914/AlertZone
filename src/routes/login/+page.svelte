@@ -25,7 +25,7 @@
 <div class="app-container login-wrapper">
   <div class="panel login-card">
     <h1 class="dashboard-header brand-header">
-      <span class="brand">AlertZone</span>
+      <span class="brand">Zone</span>
     </h1>
     <p class="subtitle">Control total en tiempo real</p>
     <input

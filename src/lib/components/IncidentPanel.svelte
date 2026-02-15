@@ -1,50 +1,59 @@
-<!-- @path: src/lib/components/IncidentPanel.svelte -->
 <script>
-  import { onMount } from 'svelte';
-  let incident = {
-    title: "",
-    desc: "",
-    priority: 0,
-    active: false,
-    recursosDesplegados: "",
-    llegadaEstimada: ""
-  };
-  let loading = true;
+  import { goto } from '$app/navigation'
+  import { onMount } from 'svelte'
+
+  let incident = null
+  let loading = true
+
   onMount(async () => {
     try {
       const res = await fetch('http://192.168.100.10:3001/api/incident', {
         credentials: 'include'
-      });
+      })
+
       if (!res.ok) {
-        loading = false;
-        return;
+        incident = null
+        return
       }
-      incident = await res.json();
+
+      incident = await res.json()
+    } catch {
+      incident = null
     } finally {
-      loading = false;
+      loading = false
     }
-  });
+  })
+
+  $: prioridad = incident?.priority ?? 0
+
   $: gravedad =
-    incident.priority >= 3
+    prioridad >= 4
+      ? "Crítica"
+      : prioridad === 3
       ? "Alta"
-      : incident.priority === 2
+      : prioridad === 2
       ? "Media"
-      : incident.priority === 1
+      : prioridad === 1
       ? "Baja"
-      : "Sin prioridad";
+      : "Sin prioridad"
+
   $: activeLight =
-    !incident.active
+    !incident?.active
       ? ""
+      : gravedad === "Crítica"
+      ? "red"
       : gravedad === "Alta"
       ? "red"
       : gravedad === "Media"
       ? "yellow"
       : gravedad === "Baja"
       ? "green"
-      : "";
-  $: recursos = incident.recursosDesplegados || "No especificado";
-  $: llegada = incident.llegadaEstimada || "No disponible";
+      : ""
+
+  $: recursos = incident?.recursosDesplegados || "No especificado"
+  $: llegada = incident?.llegadaEstimada || "No disponible"
 </script>
+
 <section
   class="panel incident-panel"
   class:red={activeLight === 'red'}
@@ -54,6 +63,8 @@
   <h2 class="panel-title center">NUEVA INCIDENCIA</h2>
   {#if loading}
     <p>Cargando incidencia...</p>
+  {:else if !incident || !incident.id}
+    <p>No hay incidencias activas.</p>
   {:else}
     <div class="traffic-light-container">
       <div class="traffic-light">
@@ -62,26 +73,36 @@
         <div class="light green" class:active={activeLight === 'green'}></div>
       </div>
     </div>
+
     <div class="incident-details">
       <h3>{incident.title}</h3>
       <p class="subtitle">{incident.desc}</p>
+
       <div class="stats-list">
         <div class="stat-row">
           <span class="stat-label">Gravedad:</span>
           <span class="stat-value">{gravedad}</span>
         </div>
+
         <div class="stat-row">
           <span class="stat-label">Recursos desplegados:</span>
           <span class="stat-value">{recursos}</span>
         </div>
+
         <div class="stat-row">
           <span class="stat-label">Llegada estimada:</span>
           <span class="stat-value">{llegada}</span>
         </div>
       </div>
-      <button class="btn-action" disabled={!incident.active}>
+
+      <button
+        class="btn-action"
+        disabled={!incident.active || !incident.id}
+        on:click={() => goto(`/incidents/${incident.id}`)}
+      >
         Detalles
       </button>
     </div>
   {/if}
 </section>
+

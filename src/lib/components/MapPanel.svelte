@@ -1,24 +1,72 @@
-<!-- @path: src/lib/components/MapPanel.svelte -->
 <script>
   import { onMount } from 'svelte';
   import 'leaflet/dist/leaflet.css';
+
   let map;
+  let L;
+  let markers = [];
+
   function zoomIn() {
     map?.zoomIn();
   }
+
   function zoomOut() {
     map?.zoomOut();
   }
+
+async function loadAlerts() {
+  const res = await fetch('http://192.168.100.10:3001/api/realtime');
+  const data = await res.json();
+
+  markers.forEach(m => m.remove());
+  markers = [];
+
+  data.forEach(alert => {
+    if (!alert.lat || !alert.lng) return;
+
+    const pulseIcon = L.divIcon({
+      className: '',
+      html: `
+        <div class="radar-pulse">
+          <div class="core"></div>
+          <div class="ring"></div>
+          <div class="ring delay-1"></div>
+          <div class="ring delay-2"></div>
+        </div>
+      `,
+      iconSize: [200, 200],
+      iconAnchor: [100, 100]
+    });
+
+    const marker = L.marker([alert.lat, alert.lng], {
+      icon: pulseIcon
+    })
+      .addTo(map)
+      .bindPopup(`
+        <strong>${alert.title}</strong><br/>
+        Prioridad: ${alert.priority}
+      `);
+
+    markers.push(marker);
+  });
+}
+
+
   onMount(async () => {
-    const L = await import('leaflet');
+    L = await import('leaflet');
+
     map = L.map('map', {
       zoomControl: false,
       attributionControl: false
     }).setView([19.7047, -103.4617], 13);
+
     L.tileLayer(
       'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
     ).addTo(map);
-    L.marker([19.7047, -103.4617]).addTo(map);
+
+    await loadAlerts();
+
+    setInterval(loadAlerts, 5000);
   });
 </script>
 <section class="panel map-panel">
