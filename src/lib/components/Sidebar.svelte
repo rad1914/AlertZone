@@ -21,6 +21,10 @@
   function incidents() {
     goto('/incidents');
   }
+  
+  function submits() {
+    goto('/submits');
+  }
 </script>
 <aside class="sidebar">
   <div class="logo-icon" on:click={goHome}>
@@ -48,7 +52,7 @@
   </span>
 </div>
     <div class="nav-item">
-      <span class="icon">
+      <span class="icon" on:click={submits}>
         <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
           <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
           <path d="M9 22v-4h6v4M8 6h.01M16 6h.01M12 6h.01M12 10h.01M16 10h.01M8 10h.01M8 14h.01M12 14h.01M16 14h.01"></path>

@@ -74,8 +74,6 @@
   });
 </script>
 
-
-
 <section class="panel map-panel">
   <div class="panel-header">
     <h2>LIVE MAP</h2>
@@ -132,3 +130,4 @@
     z-index: 10;
   }
 </style>
+

@@ -1,4 +1,3 @@
-// @path: src/b/server.js
 require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
@@ -38,6 +37,10 @@ const getJSON = (path) => {
 
 const getAlerts = () => getJSON('./alerts.json')
 const getSensors = () => getJSON('./sensors.json')
+const getSubmits = () => getJSON('./submits.json')
+
+const saveSubmits = (data) =>
+  fs.writeFileSync('./submits.json', JSON.stringify(data, null, 2))
 
 const auth = (req, res, next) =>
   req.session.user ? next() : res.status(401).json({ error: 'Unauthorized' })
@@ -95,6 +98,70 @@ app.get('/api/incident/:id', (req, res) => {
   const incident = getAlerts().find(a => a.id == req.params.id)
   if (!incident) return res.status(404).json({ error: 'Not found' })
   res.json(incident)
+})
+
+app.post('/api/submit', (req, res) => {
+  const { title, desc, lat, lng } = req.body
+
+  if (!title || !desc)
+    return res.status(400).json({ error: 'Missing fields' })
+
+  const submits = getSubmits()
+
+  const newSubmit = {
+    id: submits.length ? submits[submits.length - 1].id + 1 : 1,
+    title,
+    desc,
+    lat: lat || null,
+    lng: lng || null,
+    createdAt: new Date().toISOString()
+  }
+
+  submits.push(newSubmit)
+  saveSubmits(submits)
+
+  res.json({ ok: true, submit: newSubmit })
+})
+
+app.get('/api/submits', (_, res) => {
+  res.json(getSubmits())
+})
+
+const saveAlerts = (data) =>
+  fs.writeFileSync('./alerts.json', JSON.stringify(data, null, 2))
+  
+app.post('/api/submits/:id/approve', auth, (req, res) => {
+  const id = Number(req.params.id)
+
+  const submits = getSubmits()
+  const alerts = getAlerts()
+
+  const idx = submits.findIndex(s => s.id === id)
+  if (idx === -1)
+    return res.status(404).json({ error: 'Submit not found' })
+
+  const s = submits[idx]
+
+  const newAlert = {
+    id: alerts.length ? alerts[alerts.length - 1].id + 1 : 1,
+    title: s.title,
+    desc: s.desc,
+    lat: s.lat || null,
+    lng: s.lng || null,
+    icon: "⚠️",
+    active: true,
+    priority: 1,
+    recursosDesplegados: "",
+    llegadaEstimada: ""
+  }
+
+  alerts.push(newAlert)
+  submits.splice(idx, 1)
+
+  saveAlerts(alerts)
+  saveSubmits(submits)
+
+  res.json({ ok: true, alert: newAlert })
 })
 
 app.listen(PORT)

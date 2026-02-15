@@ -42,3 +42,14 @@ export const getCurrentIncident = () =>
 
 export const getIncidentById = (id) =>
   apiFetch(`/incident/${id}`);
+
+export const createSubmit = (data) =>
+  apiFetch('/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+
+export const getSubmits = () =>
+  apiFetch('/submits');
+  
