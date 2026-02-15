@@ -1,21 +1,18 @@
+<!-- @path: src/lib/components/IncidentPanel.svelte -->
 <script>
   import { goto } from '$app/navigation'
   import { onMount } from 'svelte'
-
   let incident = null
   let loading = true
-
   onMount(async () => {
     try {
       const res = await fetch('http://192.168.100.10:3001/api/incident', {
         credentials: 'include'
       })
-
       if (!res.ok) {
         incident = null
         return
       }
-
       incident = await res.json()
     } catch {
       incident = null
@@ -23,9 +20,7 @@
       loading = false
     }
   })
-
   $: prioridad = incident?.priority ?? 0
-
   $: gravedad =
     prioridad >= 4
       ? "Crítica"
@@ -36,7 +31,6 @@
       : prioridad === 1
       ? "Baja"
       : "Sin prioridad"
-
   $: activeLight =
     !incident?.active
       ? ""
@@ -49,11 +43,9 @@
       : gravedad === "Baja"
       ? "green"
       : ""
-
   $: recursos = incident?.recursosDesplegados || "No especificado"
   $: llegada = incident?.llegadaEstimada || "No disponible"
 </script>
-
 <section
   class="panel incident-panel"
   class:red={activeLight === 'red'}
@@ -73,28 +65,23 @@
         <div class="light green" class:active={activeLight === 'green'}></div>
       </div>
     </div>
-
     <div class="incident-details">
       <h3>{incident.title}</h3>
       <p class="subtitle">{incident.desc}</p>
-
       <div class="stats-list">
         <div class="stat-row">
           <span class="stat-label">Gravedad:</span>
           <span class="stat-value">{gravedad}</span>
         </div>
-
         <div class="stat-row">
           <span class="stat-label">Recursos desplegados:</span>
           <span class="stat-value">{recursos}</span>
         </div>
-
         <div class="stat-row">
           <span class="stat-label">Llegada estimada:</span>
           <span class="stat-value">{llegada}</span>
         </div>
       </div>
-
       <button
         class="btn-action"
         disabled={!incident.active || !incident.id}
@@ -105,4 +92,3 @@
     </div>
   {/if}
 </section>
-

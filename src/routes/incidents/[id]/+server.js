@@ -1,3 +1,4 @@
+// @path: src/routes/incidents/[id]/+server.js
 export async function GET({ params }) {
   const res = await fetch(
     `http://192.168.100.10:3001/api/incident/${params.id}`

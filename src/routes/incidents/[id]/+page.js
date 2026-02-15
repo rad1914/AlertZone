@@ -1,3 +1,4 @@
+// @path: src/routes/incidents/[id]/+page.js
 import { error } from '@sveltejs/kit';
 
 export async function load({ params, fetch }) {

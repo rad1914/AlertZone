@@ -1,29 +1,23 @@
+<!-- @path: src/lib/components/MapPanel.svelte -->
 <script>
   import { onMount } from 'svelte';
   import 'leaflet/dist/leaflet.css';
-
   let map;
   let L;
   let markers = [];
-
   function zoomIn() {
     map?.zoomIn();
   }
-
   function zoomOut() {
     map?.zoomOut();
   }
-
 async function loadAlerts() {
   const res = await fetch('http://192.168.100.10:3001/api/realtime');
   const data = await res.json();
-
   markers.forEach(m => m.remove());
   markers = [];
-
   data.forEach(alert => {
     if (!alert.lat || !alert.lng) return;
-
     const pulseIcon = L.divIcon({
       className: '',
       html: `
@@ -37,7 +31,6 @@ async function loadAlerts() {
       iconSize: [200, 200],
       iconAnchor: [100, 100]
     });
-
     const marker = L.marker([alert.lat, alert.lng], {
       icon: pulseIcon
     })
@@ -46,26 +39,19 @@ async function loadAlerts() {
         <strong>${alert.title}</strong><br/>
         Prioridad: ${alert.priority}
       `);
-
     markers.push(marker);
   });
 }
-
-
   onMount(async () => {
     L = await import('leaflet');
-
     map = L.map('map', {
       zoomControl: false,
       attributionControl: false
     }).setView([19.7047, -103.4617], 13);
-
     L.tileLayer(
       'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
     ).addTo(map);
-
     await loadAlerts();
-
     setInterval(loadAlerts, 5000);
   });
 </script>

@@ -1,13 +1,12 @@
+<!-- @path: src/lib/components/Sensors.svelte -->
 <!-- @path: src/lib/components/SensorsList.svelte -->
 <script>
   export let items = [];
 </script>
-
 <section class="panel list-panel sensors" style="height: 180; max-height: 180px; overflow: hidden;">
   <div class="panel-header">
     <h2>SENSORES</h2>
   </div>
-
   <div class="sensor-list" style="flex: 1; overflow-y: auto;">
     {#each items as sensor}
       <div class="sensor-item">
