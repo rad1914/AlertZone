@@ -2,16 +2,13 @@
 <script>
   import { onMount } from "svelte";
   import { getDashboard } from "$lib/data";
-
   let operator = "";
   let state = "";
   let realTime = [];
   let sensors = [];
-
   onMount(async () => {
     try {
       const data = await getDashboard();
-
       operator = data.operator;
       state = data.state;
       realTime = data.realTime;

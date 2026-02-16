@@ -1,5 +1,7 @@
 // @path: src/lib/data.js
-const API_BASE = '/api';
+import { browser } from '$app/environment';
+
+export const API_BASE = browser ? '/api' : 'http://localhost:3001/api';
 
 async function apiFetch(endpoint, options = {}) {
   const res = await fetch(`${API_BASE}${endpoint}`, {
@@ -52,4 +54,3 @@ export const createSubmit = (data) =>
 
 export const getSubmits = () =>
   apiFetch('/submits');
-  

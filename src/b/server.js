@@ -7,6 +7,8 @@ const fs = require('fs')
 const app = express()
 const PORT = process.env.PORT || 3001
 
+app.set('trust proxy', 1)
+
 app.use(cors({
   origin: true,
   credentials: true
@@ -20,8 +22,8 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    sameSite: 'lax',
-    secure: false
+    sameSite: 'none',
+    secure: true
   }
 }))
 
@@ -129,7 +131,7 @@ app.get('/api/submits', (_, res) => {
 
 const saveAlerts = (data) =>
   fs.writeFileSync('./alerts.json', JSON.stringify(data, null, 2))
-  
+
 app.post('/api/submits/:id/approve', auth, (req, res) => {
   const id = Number(req.params.id)
 
@@ -164,4 +166,6 @@ app.post('/api/submits/:id/approve', auth, (req, res) => {
   res.json({ ok: true, alert: newAlert })
 })
 
-app.listen(PORT)
+app.listen(PORT, '0.0.0.0', () => {
+  console.log('API running on', PORT)
+})

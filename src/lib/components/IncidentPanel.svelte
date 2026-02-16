@@ -1,10 +1,9 @@
+<!-- @path: src/lib/components/IncidentPanel.svelte -->
 <script>
 import { onMount } from 'svelte'
 import { getCurrentIncident } from '$lib/data'
-
 let incident = null
 let loading = true
-
 onMount(async () => {
   try {
     incident = await getCurrentIncident()
@@ -13,16 +12,13 @@ onMount(async () => {
   }
   loading = false
 })
-
 $: prioridad = incident?.priority ?? 0
-
 $: gravedad =
   prioridad >= 4 ? "Crítica" :
   prioridad === 3 ? "Alta" :
   prioridad === 2 ? "Media" :
   prioridad === 1 ? "Baja" :
   "Sin prioridad"
-
 $: activeLight =
   incident?.active
     ? prioridad >= 3 ? "red"
@@ -30,11 +26,9 @@ $: activeLight =
     : prioridad === 1 ? "green"
     : ""
     : ""
-
 $: recursos = incident?.recursosDesplegados ?? "No especificado"
 $: llegada = incident?.llegadaEstimada ?? "No disponible"
 </script>
-
 <section
   class="panel incident-panel"
   class:red={activeLight === 'red'}

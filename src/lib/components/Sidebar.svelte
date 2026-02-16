@@ -1,10 +1,9 @@
+<!-- @path: src/lib/components/Sidebar.svelte -->
 <script>
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
   import { logout as apiLogout } from '$lib/data';
-
   $: current = $page.url.pathname;
-
   async function logout() {
     try {
       await apiLogout();
@@ -13,15 +12,12 @@
       console.error(e);
     }
   }
-
   function goHome() {
     goto('/');
   }
-
   function incidents() {
     goto('/incidents');
   }
-  
   function submits() {
     goto('/submits');
   }
@@ -33,7 +29,6 @@
     </svg>
   </div>
   <nav class="nav-icons">
-
 <div class="nav-item active">
   <span class="icon" on:click={goHome}>
     <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -42,8 +37,6 @@
     </svg>
   </span>
 </div>
-
-
 <div class="nav-item">
   <span class="icon" on:click={incidents}>
     <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
