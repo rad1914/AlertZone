@@ -1,4 +1,3 @@
-<!-- @path: src/routes/+page.svelte -->
 <script>
   import Sidebar from '$lib/components/Sidebar.svelte';
   import TopHeader from '$lib/components/TopHeader.svelte';
@@ -13,10 +12,14 @@
 <div class="app-container">
   <Sidebar />
   <main class="main-content">
-    <TopHeader
-      operator={data.dashboard.operator}
-      state={data.dashboard.state}
-    />
+    {#if data?.dashboard}
+      <TopHeader
+        operator={data.dashboard.operator}
+        state={data.dashboard.state}
+      />
+    {:else}
+      <p>Loading...</p>
+    {/if}
     <DashboardHeader />
     <div class="dashboard-grid">
       <IncidentPanel />

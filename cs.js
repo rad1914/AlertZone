@@ -20,32 +20,89 @@ function getFileType(ext) {
     ext === '.kt' ||
     ext === '.kts' ||
     ext === '.gradle' ||
-    ext === '.sh'
+    ext === '.sh' ||
+    ext === '.cpp' ||
+    ext === '.cc' ||
+    ext === '.cxx' ||
+    ext === '.hpp' ||
+    ext === '.hh' ||
+    ext === '.hxx' ||
+    ext === '.h' ||
+    ext === '.py'
   ) return 'code';
   if (ext === '.xml') return 'xml';
   if (ext === '.html') return 'html';
-  if (ext === '.svelte') return 'svelte';
+  if (ext === '.properties') return 'properties';
   return null;
 }
 
-function buildExactPathCommentRegex(commentLine) {
-  const escaped = commentLine
-    .trim()
-    .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-    .replace(/-->$/, '-->\\s*$');
-  return new RegExp(`^\\s*${escaped}`, 'm');
+function extractExistingPath(content) {
+  const match = content.match(/@path:\s*(.+)/);
+  return match ? match[1].trim() : null;
 }
 
-function cleanCodeContent(code) {
-  return code
-    .replace(/\/\*[\s\S]*?\*\//g, m => m.includes('@path:') ? m : '')
-    .replace(/^\s*\/\/.*$/gm, line => line.includes('@path:') ? line : '')
-    .replace(/^\s*#.*$/gm, line => line.includes('@path:') ? line : '')
-    .replace(/([^:"'\n])\/\/(?!.*@path:).*$/gm, (_, p) => p.trimEnd())
-    .replace(/\[cite\s*:\s*\d+(?:\s*,\s*\d+)*\]/g, '')
-    .replace(/\[cite(?:_start|_end)?\]/g, '')
-    .replace(/\[span_\d+\]\((?:start|end)_span\)/g, '')
-    .replace(/^\s*$/gm, '');
+function getPathComment(relPath, fileType, ext) {
+  if (fileType === 'xml' || fileType === 'html') {
+    return ``;
+  }
+  if (ext === '.sh' || ext === '.py' || fileType === 'properties') {
+    return `# @path: ${relPath}`;
+  }
+  return `// @path: ${relPath}`;
+}
+
+function removeExistingPathComments(content) {
+  let shebang = '';
+  if (content.startsWith('#!')) {
+    const i = content.indexOf('\n');
+    if (i !== -1) {
+      shebang = content.slice(0, i);
+      content = content.slice(i + 1);
+    } else {
+      return content;
+    }
+  }
+
+  content = content.replace(/^\s*(\/\/|#).*\n?/gm, '');
+  content = content.replace(/\s+#.*$/gm, '');
+  content = content.replace(/\n{2,}/g, '\n');
+
+  if (shebang) {
+    content = shebang + '\n' + content.replace(/^\n+/, '');
+  }
+
+  return content;
+}
+
+function insertPathComment(content, commentLine, fileType, ext) {
+  if (fileType === 'xml' || fileType === 'html') {
+    if (content.startsWith('<?xml')) {
+      const endDecl = content.indexOf('?>');
+      if (endDecl !== -1) {
+        const before = content.slice(0, endDecl + 2);
+        const after = content.slice(endDecl + 2).replace(/^\r?\n/, '');
+        return `${before}\n${commentLine}\n${after}`;
+      }
+    }
+    return `${commentLine}\n${content}`;
+  }
+
+  if ((ext === '.sh' || ext === '.py') && content.startsWith('#!')) {
+    const firstNewline = content.indexOf('\n');
+    if (firstNewline !== -1) {
+      const shebang = content.slice(0, firstNewline);
+      const rest = content.slice(firstNewline + 1).replace(/^\r?\n/, '');
+      return `${shebang}\n${commentLine}\n${rest}`;
+    }
+  }
+
+  return `${commentLine}\n${content}`;
+}
+
+async function writeAtomic(absPath, content) {
+  const tmpPath = `${absPath}.tmp`;
+  await fs.writeFile(tmpPath, content, 'utf8');
+  await fs.rename(tmpPath, absPath);
 }
 
 async function processFile(filePath) {
@@ -55,85 +112,37 @@ async function processFile(filePath) {
   const fileType = getFileType(ext);
   if (!fileType) return;
 
-  let content;
   try {
-    content = await fs.readFile(absPath, 'utf8');
+    let content = await fs.readFile(absPath, 'utf8');
+    const commentLine = getPathComment(relPath, fileType, ext);
+
+    const firstLines = content.split('\n').slice(0, 20).join('\n');
+    const existingPath = extractExistingPath(firstLines);
+
+    content = removeExistingPathComments(content);
+    content = insertPathComment(content, commentLine, fileType, ext);
+    console.log(existingPath !== relPath ? `Updated @path: ${relPath}` : `Cleaned (path unchanged): ${relPath}`);
+
+    content = content.replace(/\n{3,}/g, '\n\n');
+    if (!content.endsWith('\n')) content += '\n';
+
+    await writeAtomic(absPath, content);
+    console.log(`Written: ${relPath}`);
   } catch (err) {
-    console.error(`Failed to read: ${relPath}`, err);
+    console.error(`Failed to process: ${relPath}`, err);
     return;
-  }
-
-  let commentLine;
-  if (fileType === 'xml' || fileType === 'html' || fileType === 'svelte') {
-    commentLine = `<!-- @path: ${relPath} -->\n`;
-  } else if (ext === '.sh') {
-    commentLine = `# @path: ${relPath}\n`;
-  } else {
-    commentLine = `// @path: ${relPath}\n`;
-  }
-
-  const pathCommentRegex = buildExactPathCommentRegex(commentLine);
-  const header = content.slice(0, 500);
-
-  if (!pathCommentRegex.test(header)) {
-    if ((fileType === 'xml' || fileType === 'html') && content.startsWith('<?xml')) {
-      const endDecl = content.indexOf('?>');
-      if (endDecl !== -1) {
-        const before = content.slice(0, endDecl + 2);
-        const after = content.slice(endDecl + 2).replace(/^\r?\n/, '');
-        content = `${before}\n${commentLine}${after}`;
-      } else {
-        content = `${commentLine}${content}`;
-      }
-    } else {
-      content = `${commentLine}${content}`;
-    }
-    console.log(`Prepended @path to: ${relPath}`);
-  } else {
-    console.log(`Skipping (already has @path): ${relPath}`);
-  }
-
-  if (fileType === 'code') {
-    content = cleanCodeContent(content);
-  } else if (fileType === 'xml' || fileType === 'html') {
-    content = content
-      .replace(/<!--[\s\S]*?-->/g, m => m.includes('@path:') ? m : '');
-  } else if (fileType === 'svelte') {
-    // Remove HTML comments except @path
-    content = content.replace(/<!--[\s\S]*?-->/g, m => m.includes('@path:') ? m : '');
-
-    // Clean each <script>...</script> block using the same code-clean rules
-    content = content.replace(
-      /<script\b([^>]*)>([\s\S]*?)<\/script>/gi,
-      (match, attrs, scriptBody) => {
-        const cleaned = cleanCodeContent(scriptBody);
-        return `<script${attrs}>${cleaned}</script>`;
-      }
-    );
-
-    // Optionally, trim empty lines introduced
-    content = content.replace(/^\s*[\r\n]/gm, '');
-  }
-
-  if (content.includes('[span_')) {
-    console.warn(`⚠️ Unremoved spans in ${relPath}`);
-  }
-
-  content = content.replace(/\n{3,}/g, '\n\n');
-
-  if (!content.endsWith('\n')) content += '\n';
-
-  try {
-    await fs.writeFile(absPath, content, 'utf8');
-    console.log(`Cleaned: ${relPath}`);
-  } catch (err) {
-    console.error(`Failed to write: ${relPath}`, err);
   }
 }
 
 async function main() {
   const exts = new Set([
-    '.js','.jsx','.cjs','.mjs','.kt','.kts','.gradle','.xml','.html','.sh', '.svelte'
+    '.js','.jsx','.cjs','.mjs',
+    '.kt','.kts','.gradle',
+    '.xml','.html','.sh',
+    '.cpp','.cc','.cxx',
+    '.hpp','.hh','.hxx','.h',
+    '.properties',
+    '.py'
   ]);
 
   const entries = [];
@@ -141,9 +150,7 @@ async function main() {
   async function walk(dir) {
     const list = await fs.readdir(dir, { withFileTypes: true });
     for (const d of list) {
-      if (d.name === 'node_modules') continue;
-      if (d.name === '.svelte-kit') continue;
-      if (d.name === 'build') continue;
+      if (d.name === 'node_modules' || d.name === '.venv' || d.name === '.git' || d.name === '.gradle' || d.name === 'gradle') continue;
       const full = resolve(dir, d.name);
       if (d.isDirectory()) {
         await walk(full);
@@ -155,14 +162,15 @@ async function main() {
   }
 
   await walk(cwd);
-
+  
   if (!entries.length) {
     console.warn('No files found');
     return;
   }
 
-  await Promise.allSettled(entries.map(processFile));
-
+  for (const file of entries) {
+    await processFile(file);
+  }
   console.log('All done!');
 }
 

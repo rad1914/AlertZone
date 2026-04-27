@@ -1,4 +1,3 @@
-<!-- @path: src/routes/login/+page.svelte -->
 <script>
   import { goto } from '$app/navigation'
   import { login, checkSession } from '$lib/data'
@@ -25,7 +24,7 @@
     setTimeout(() => cooldown = false, COOLDOWN_MS)
     try {
       await login(username, password)
-      goto('/')
+      await goto('/')
     } catch (e) {
       error = e.message === 'Unauthorized'
         ? 'Credenciales inválidas. Intenta de nuevo.'

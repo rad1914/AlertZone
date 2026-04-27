@@ -2,6 +2,7 @@
 <script>
 import { onMount } from 'svelte'
 import { getCurrentIncident } from '$lib/data'
+import { goto } from '$app/navigation'
 let incident = null
 let loading = true
 onMount(async () => {
