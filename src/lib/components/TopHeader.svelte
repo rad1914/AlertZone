@@ -22,7 +22,7 @@
   <div class="header-left">
     <span class="brand">Zone</span>
     <span class="divider"></span>
-    <span class="header-label blue-text">WAR ROOM</span>
+    <span class="header-label blue-text">Dashboard</span>
     <span class="header-label">
       OPERADOR:
       <span class="white-text">{operator}</span>
